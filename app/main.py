@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from typing import Optional
 from random import randrange
 from fastapi import Response
+from psycopg2 import connect
+from psycopg2.extras import RealDictCursor
+from time import sleep
 
 
 class Post(BaseModel):
@@ -11,6 +14,19 @@ class Post(BaseModel):
     content: str
     published: bool = True
     rating: Optional[int] = None
+
+
+while True:
+    try:
+        connection = connect(database="postgres", user="postgres",
+                             host="localhost", password="RESTFULapi_Olymp-18$", cursor_factory=RealDictCursor)
+        cursor = connection.cursor()
+        print("database connection successful")
+        break
+    except Exception as e:
+        print("database connection was denied")
+        print("error: ", e)
+        sleep(2)
 
 
 temp_storage = [{"title": "default title",
@@ -40,7 +56,10 @@ async def root():
 
 @ app.get("/posts")
 async def get_posts():
-    return {"data": temp_storage}
+    cursor.execute("""SELECT * FROM "post-webapp".posts""")
+    posts = cursor.fetchall()
+
+    return {"data": posts}
 
 
 @ app.post("/posts", status_code=status.HTTP_201_CREATED)
