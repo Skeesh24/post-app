@@ -93,15 +93,17 @@ async def get_post(id: int, response: Response):
 
 @app.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED)
 async def update_post(id: int, post: Post):
-    index = find_post_index(id)
-    if index == None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            f"{index}th post was not found")
+    cursor.execute("""UPDATE "post-webapp".posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
+                   (post.title, post.content, post.published, id,))
+    updated = cursor.fetchone()
 
-    post_dict = post.dict()
-    post_dict["id"] = id
-    temp_storage[index] = post_dict
-    return {"data": post_dict}
+    connection.commit()
+
+    if updated == None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND,
+                            f"{id}th post was not found")
+
+    return {"data": updated}
 
 
 @app.delete("/posts/{id}", status_code=204)
