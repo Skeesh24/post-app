@@ -23,6 +23,13 @@ def find_post(id: int) -> dict | None:
             return post
 
 
+def find_post_index(id: int) -> int | None:
+    for i, post in enumerate(temp_storage):
+        if post["id"] == id:
+            return i
+    return None
+
+
 app = FastAPI()
 
 
@@ -57,3 +64,14 @@ async def get_post(id: int, response: Response):
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"the {id}th post was not found")
     return {"data": post}
+
+
+@app.delete("/posts/{id}", status_code=204)
+async def delete_post(id: int):
+    index = find_post_index(id)
+    if not index:
+        raise HTTPException(status.HTTP_404_NOT_FOUND,
+                            f"{id}th post was not found")
+    temp_storage.pop(index)
+
+    return
