@@ -1,5 +1,14 @@
 from fastapi import FastAPI
 from fastapi.params import Body
+from pydantic import BaseModel
+from typing import Optional
+
+
+class Post(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+    rating: Optional[int] = None
 
 
 app = FastAPI()
@@ -16,5 +25,5 @@ async def get_posts():
 
 
 @app.post("/createpost")
-async def create_post(payload: dict = Body(...)):
-    return {"new post": f"title is '{payload['title']}', content is '{payload['content']}'"}
+async def create_post(post: Post):
+    return post.__dict__
