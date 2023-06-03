@@ -64,10 +64,14 @@ async def get_posts():
 
 @ app.post("/posts", status_code=status.HTTP_201_CREATED)
 async def create_post(post: Post):
-    post_dict = post.dict()
-    post_dict["id"] = randrange(0, 1000000)
-    temp_storage.append(post_dict)
-    return {"data": post_dict}
+    new_post = cursor.execute(
+        """INSERT INTO "post-webapp".posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
+
+    new_post = cursor.fetchone()
+
+    connection.commit()
+
+    return {"data": new_post}
 
 
 @ app.get("/posts/latest")
