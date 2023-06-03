@@ -82,7 +82,9 @@ async def get_latest_post():
 
 @ app.get("/posts/{id}")
 async def get_post(id: int, response: Response):
-    post = find_post(id)
+    cursor.execute(
+        """SELECT * FROM "post-webapp".posts WHERE id = %s""", (id, ))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"the {id}th post was not found")
@@ -104,10 +106,13 @@ async def update_post(id: int, post: Post):
 
 @app.delete("/posts/{id}", status_code=204)
 async def delete_post(id: int):
-    index = find_post_index(id)
-    if not index:
+    cursor.execute(
+        """DELETE FROM "post-webapp".posts WHERE id = %s RETURNING *""", (id,))
+    post = cursor.fetchone()
+
+    connection.commit()
+
+    if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
-    temp_storage.pop(index)
-
     return
