@@ -11,6 +11,11 @@ class Post(BaseModel):
     rating: Optional[int] = None
 
 
+temp_storage = [{"title": "title of post 1",
+                 "content": "content of post 1", "id": 1},
+                {"title": "favourite foods", "content": "I like pizza", "id": 2}]
+
+
 app = FastAPI()
 
 
@@ -19,11 +24,11 @@ async def root():
     return {"message ": "welcome to my api"}
 
 
-@app.get("posts/")
+@app.get("/posts")
 async def get_posts():
-    return {"data": "This is ur posts"}
+    return {"data": temp_storage}
 
 
-@app.post("/createpost")
+@app.post("/posts")
 async def create_post(post: Post):
-    return post.__dict__
+    return {"data": post.__dict__}
