@@ -12,9 +12,13 @@ class Post(BaseModel):
     rating: Optional[int] = None
 
 
-temp_storage = [{"title": "title of post 1",
-                 "content": "content of post 1", "id": 1},
-                {"title": "favourite foods", "content": "I like pizza", "id": 2}]
+temp_storage = []
+
+
+def find_post(id: int):
+    for post in temp_storage:
+        if post["id"] == id:
+            return post
 
 
 app = FastAPI()
@@ -30,14 +34,15 @@ async def get_posts():
     return {"data": temp_storage}
 
 
+@app.get("/posts/{id}")
+async def get_post(id: int):
+    post = find_post(id)
+    return {"data": post}
+
+
 @app.post("/posts")
 async def create_post(post: Post):
     post_dict = post.dict()
     post_dict["id"] = randrange(0, 1000000)
     temp_storage.append(post_dict)
     return {"data": post_dict}
-
-
-@app.get("/post/{id}")
-async def get_post(id: int):
-    pass
