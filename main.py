@@ -12,7 +12,8 @@ class Post(BaseModel):
     rating: Optional[int] = None
 
 
-temp_storage = []
+temp_storage = [{"title": "default title",
+                 "content": "default content", "id": 1}]
 
 
 def find_post(id: int):
@@ -34,15 +35,21 @@ async def get_posts():
     return {"data": temp_storage}
 
 
-@app.get("/posts/{id}")
-async def get_post(id: int):
-    post = find_post(id)
-    return {"data": post}
-
-
-@app.post("/posts")
+@ app.post("/posts")
 async def create_post(post: Post):
     post_dict = post.dict()
     post_dict["id"] = randrange(0, 1000000)
     temp_storage.append(post_dict)
     return {"data": post_dict}
+
+
+@app.get("/posts/latest")
+async def get_latest_post():
+    post = temp_storage[len(temp_storage)-1]
+    return {"detail": post}
+
+
+@app.get("/posts/{id}")
+async def get_post(id: int):
+    post = find_post(id)
+    return {"data": post}
