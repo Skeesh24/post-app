@@ -1,8 +1,6 @@
 from fastapi import FastAPI, status, HTTPException
-from fastapi.params import Body
 from pydantic import BaseModel
 from typing import Optional
-from random import randrange
 from fastapi import Response
 from psycopg2 import connect
 from psycopg2.extras import RealDictCursor
@@ -27,23 +25,6 @@ while True:
         print("database connection was denied")
         print("error: ", e)
         sleep(2)
-
-
-temp_storage = [{"title": "default title",
-                 "content": "default content", "id": 1}]
-
-
-def find_post(id: int) -> dict | None:
-    for post in temp_storage:
-        if post["id"] == id:
-            return post
-
-
-def find_post_index(id: int) -> int | None:
-    for i, post in enumerate(temp_storage):
-        if post["id"] == id:
-            return i
-    return None
 
 
 app = FastAPI()
@@ -76,12 +57,14 @@ async def create_post(post: Post):
 
 @ app.get("/posts/latest")
 async def get_latest_post():
-    post = temp_storage[len(temp_storage)-1]
+    cursor.execute(
+        """SELECT * FROM "post-webapp".posts ORDER BY created_at DESC LIMIT 1""")
+    post = cursor.fetchone()
     return {"detail": post}
 
 
 @ app.get("/posts/{id}")
-async def get_post(id: int, response: Response):
+async def get_post(id: int):
     cursor.execute(
         """SELECT * FROM "post-webapp".posts WHERE id = %s""", (id, ))
     post = cursor.fetchone()
