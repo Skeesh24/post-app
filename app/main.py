@@ -5,19 +5,14 @@ from fastapi import Response
 from sqlalchemy.orm import Session
 from sqlalchemy import DateTime, select
 from datetime import datetime
+from copy import deepcopy
 
 from app.models import posts, metadata, Post
 from .database import get_db, engine
+from .schemas import PostResponse, PostCreate, PostUpdate
 
 
 metadata.create_all(bind=engine)
-
-
-class PostValid(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-    created_at: datetime = datetime.now()
 
 
 app = FastAPI()
@@ -41,15 +36,15 @@ async def get_posts(db: Session = Depends(get_db)):
     return {"data": res}
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-async def create_post(post: PostValid, db: Session = Depends(get_db)):
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
+async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = Post(**post.dict())
 
     db.add(new_post)
 
     db.commit()
 
-    return {"data": new_post}
+    return new_post
 
 
 @app.get("/posts/latest")
@@ -64,7 +59,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
 
 
 @app.get("/posts/{id}")
-async def get_post(id: int, db: Session = Depends(get_db)):
+async def get_post(id: int, db: Session = Depends(get_db), response_model=PostResponse):
     post = db.get(Post, id)
 
     if not post:
@@ -73,24 +68,24 @@ async def get_post(id: int, db: Session = Depends(get_db)):
     return {"data": post}
 
 
-@app.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED)
-async def update_post(id: int, post: PostValid, db: Session = Depends(get_db)):
+@app.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=PostResponse)
+async def update_post(id: int, post: PostUpdate, db: Session = Depends(get_db)):
     updated = db.get(Post, id)
 
     if updated == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
+
+    new_post = deepcopy(updated)
+    new_post.created_at = None
+    new_post.title = updated.title
+    new_post.content = updated.content
+
     db.delete(updated)
 
-    # id saving
-    updated = post.dict()
-    updated.update({"id": id})
-    updated = Post(**updated)
-
-    db.add(updated)
+    db.add(new_post)
 
     db.commit()
-
     return {"data": updated}
 
 
