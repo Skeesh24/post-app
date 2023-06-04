@@ -35,17 +35,5 @@ def get_db():
         db.close()
 
 
-# while True:
-#     try:
-#         connection = connect(database=Config.MYSQL_DATABASE, user=Config.MYSQL_USER,
-#                              host=Config.MYSQL_HOST, password=Config.MYSQL_PASSWORD)
-#         cursor = connection.cursor()
-#         print("database connection successful")
-#         break
-#     except Exception as e:
-#         print("database connection was denied")
-#         print("error: ", e)
-#         sleep(2)
-
 cursor = None
 connection = None

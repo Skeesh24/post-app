@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from fastapi import Response
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 from app.models import posts, metadata, Post
 from .database import get_db, cursor, connection, engine
@@ -15,50 +16,51 @@ class PostValid(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
 
 
 app = FastAPI()
 
 
-@ app.get("/")
+@app.get("/")
 async def root():
     return {"message ": "welcome to my api"}
 
 
-@ app.get("/posts")
-async def get_posts():
-    cursor.execute("""SELECT * FROM "post-webapp".posts""")
-    posts = cursor.fetchall()
+@app.get("/posts")
+async def get_posts(db: Session = Depends(get_db)):
+    res = list(db.execute(select(Post)))
+    l = [dict]
 
-    return {"data": posts}
+    for r in res:
+        a = Post.dictFromRow(r)
+        l.append(a)
+    print(l[0])
+
+    return {"data": l}
 
 
-@ app.post("/posts", status_code=status.HTTP_201_CREATED)
-async def create_post(post: PostValid):
-    new_post = cursor.execute(
-        """INSERT INTO "post-webapp".posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
+async def create_post(post: PostValid, db: Session = Depends(get_db)):
+    new_post = Post(**post.dict())
 
-    new_post = cursor.fetchone()
+    db.add(new_post)
 
-    connection.commit()
+    db.commit()
 
     return {"data": new_post}
 
 
-@ app.get("/posts/latest")
-async def get_latest_post():
-    cursor.execute(
-        """SELECT * FROM "post-webapp".posts ORDER BY created_at DESC LIMIT 1""")
-    post = cursor.fetchone()
-    return {"detail": post}
+@app.get("/posts/latest")
+async def get_latest_post(db: Session = Depends(get_db)):
+    res = db.execute(select(Post).order_by(
+        posts.c["id"]).limit(1)).fetchone()
+
+    return {"detail": Post.dictFromRow(res)}
 
 
-@ app.get("/posts/{id}")
+@app.get("/posts/{id}")
 async def get_post(id: int, db: Session = Depends(get_db)):
-    cursor.execute(
-        """SELECT * FROM "post-webapp".posts WHERE id = %s""", (id, ))
-    post = cursor.fetchone()
+    post = db.get(Post, id)
 
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
