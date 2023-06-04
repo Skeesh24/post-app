@@ -1,12 +1,13 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from pydantic import BaseModel
-from typing import Optional
+from typing import Any, Optional
 from fastapi import Response
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import DateTime, select
+from datetime import datetime
 
 from app.models import posts, metadata, Post
-from .database import get_db, cursor, connection, engine
+from .database import get_db, engine
 
 
 metadata.create_all(bind=engine)
@@ -16,6 +17,7 @@ class PostValid(BaseModel):
     title: str
     content: str
     published: bool = True
+    created_at: datetime = datetime.now()
 
 
 app = FastAPI()
@@ -52,8 +54,11 @@ async def create_post(post: PostValid, db: Session = Depends(get_db)):
 
 @app.get("/posts/latest")
 async def get_latest_post(db: Session = Depends(get_db)):
-    res = db.execute(select(Post).order_by(
-        posts.c["id"]).limit(1)).fetchone()
+    sel = select(Post)
+    res = list(db.execute(sel.order_by(
+        posts.c["created_at"])).fetchall())
+    # reverse and taking the one
+    res = res[::-1][0]
 
     return {"detail": Post.dictFromRow(res)}
 
@@ -69,28 +74,35 @@ async def get_post(id: int, db: Session = Depends(get_db)):
 
 
 @app.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED)
-async def update_post(id: int, post: PostValid):
-    cursor.execute("""UPDATE "post-webapp".posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
-                   (post.title, post.content, post.published, id,))
-    updated = cursor.fetchone()
-
-    connection.commit()
+async def update_post(id: int, post: PostValid, db: Session = Depends(get_db)):
+    updated = db.get(Post, id)
 
     if updated == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
+    db.delete(updated)
+
+    # id saving
+    updated = post.dict()
+    updated.update({"id": id})
+    updated = Post(**updated)
+
+    db.add(updated)
+
+    db.commit()
 
     return {"data": updated}
 
 
 @app.delete("/posts/{id}", status_code=204)
-async def delete_post(id: int):
-    cursor.execute(
-        """DELETE FROM "post-webapp".posts WHERE id = %s RETURNING *""", (id,))
-    post = cursor.fetchone()
-
-    connection.commit()
+async def delete_post(id: int, db: Session = Depends(get_db)):
+    post = db.get(Post, id)
 
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
+
+    db.delete(post)
+
+    db.commit()
+    return
