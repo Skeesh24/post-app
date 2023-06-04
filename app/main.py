@@ -30,15 +30,15 @@ async def root():
 
 @app.get("/posts")
 async def get_posts(db: Session = Depends(get_db)):
-    res = list(db.execute(select(Post)))
-    l = [dict]
+    raw = db.execute(select(Post))
+    len = db.execute(select(Post)).fetchall().__len__()
 
-    for r in res:
-        a = Post.dictFromRow(r)
-        l.append(a)
-    print(l[0])
+    res = []
 
-    return {"data": l}
+    for i in range(len):
+        res.append(Post.dictFromRow(raw.fetchone()))
+
+    return {"data": res}
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
