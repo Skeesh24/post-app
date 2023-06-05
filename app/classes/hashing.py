@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 
 
-class Hashed:
+class Hasher:
     def __init__(self):
         self.__context = CryptContext(schemes=["bcrypt"])
 

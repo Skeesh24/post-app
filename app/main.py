@@ -5,10 +5,10 @@ from sqlalchemy import select
 
 from copy import deepcopy
 
-from .models import User, posts, users, metadata, Post
-from .database import get_db, engine
-from .schemas import PostResponse, PostCreate, PostUpdate, UserCreate, UserResponse
-from .methods.hashing import Hashed
+from .classes.models import User, posts, users, metadata, Post
+from .classes.database import get_db, engine
+from .classes.schemas import PostResponse, PostCreate, PostUpdate, UserCreate, UserResponse
+from .classes.hashing import Hasher
 
 
 metadata.create_all(bind=engine)
@@ -107,7 +107,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(**user.dict())
 
     # hashing the pass
-    hasher = Hashed()
+    hasher = Hasher()
     new_user.password = hasher.get_hashed(new_user.password)
 
     db.add(new_user)
