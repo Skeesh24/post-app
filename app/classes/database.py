@@ -1,12 +1,10 @@
-from time import sleep
 from sqlalchemy import create_engine, text
 from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from mysql.connector import connect
 
 
-from .config import Config
+from config import Config
 
 
 engine = create_engine(url=Config.MYSQL_CONNECTION_STRING)
