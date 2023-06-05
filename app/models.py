@@ -46,7 +46,7 @@ users = Table(
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("email", String(50), unique=True, nullable=False),
-    Column("password", String(50), nullable=False),
+    Column("password", String(100), nullable=False),
     Column("created_at", DateTime(timezone=True),
            nullable=False, server_default=func.now())
 )

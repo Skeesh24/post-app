@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from mysql.connector import connect
 
 
-from app.config import Config
+from .config import Config
 
 
 engine = create_engine(url=Config.MYSQL_CONNECTION_STRING)

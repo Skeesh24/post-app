@@ -2,11 +2,13 @@ from fastapi import FastAPI, status, HTTPException, Depends
 from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+
 from copy import deepcopy
 
-from app.models import User, posts, users, metadata, Post
+from .models import User, posts, users, metadata, Post
 from .database import get_db, engine
 from .schemas import PostResponse, PostCreate, PostUpdate, UserCreate, UserResponse
+from .methods.hashing import Hashed
 
 
 metadata.create_all(bind=engine)
@@ -103,6 +105,10 @@ async def delete_post(id: int, db: Session = Depends(get_db)):
 @app.post("/users", status_code=201, response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(**user.dict())
+
+    # hashing the pass
+    hasher = Hashed()
+    new_user.password = hasher.get_hashed(new_user.password)
 
     db.add(new_user)
 
