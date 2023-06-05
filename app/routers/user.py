@@ -7,10 +7,10 @@ from classes.hashing import Hasher
 from sqlalchemy.orm import Session
 
 
-router = APIRouter()
+router = APIRouter(prefix="/users")
 
 
-@router.post("/users", status_code=201, response_model=UserResponse)
+@router.post("", status_code=201, response_model=UserResponse)
 async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(**user.dict())
 
@@ -25,7 +25,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/users/{id}", response_model=UserResponse)
+@router.get("/{id}", response_model=UserResponse)
 async def get_user(id: int, db: Session = Depends(get_db)):
     user = db.get(User, id)
     if not user:

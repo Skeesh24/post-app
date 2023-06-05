@@ -8,10 +8,10 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
 
 
-router = APIRouter()
+router = APIRouter(prefix="/posts")
 
 
-@router.get("/posts")
+@router.get("")
 async def get_posts(db: Session = Depends(get_db)):
     raw = db.execute(select(Post))
     len = db.execute(select(Post)).fetchall().__len__()
@@ -24,7 +24,7 @@ async def get_posts(db: Session = Depends(get_db)):
     return {"data": res}
 
 
-@router.post("/posts", status_code=status.HTTP_201_CREATED, response_model=List[PostResponse])
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=List[PostResponse])
 async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = Post(**post.dict())
 
@@ -35,7 +35,7 @@ async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get("/posts/latest")
+@router.get("/latest")
 async def get_latest_post(db: Session = Depends(get_db)):
     sel = select(Post)
     res = list(db.execute(sel.order_by(
@@ -46,7 +46,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
     return {"detail": Post.dictFromRow(res)}
 
 
-@router.get("/posts/{id}")
+@router.get("/{id}")
 async def get_post(id: int, db: Session = Depends(get_db), response_model=PostResponse):
     post = db.get(Post, id)
 
@@ -56,7 +56,7 @@ async def get_post(id: int, db: Session = Depends(get_db), response_model=PostRe
     return {"data": post}
 
 
-@router.put("/posts/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=PostResponse)
+@router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=PostResponse)
 async def update_post(id: int, post: PostUpdate, db: Session = Depends(get_db)):
     updated = db.get(Post, id)
 
@@ -77,7 +77,7 @@ async def update_post(id: int, post: PostUpdate, db: Session = Depends(get_db)):
     return {"data": updated}
 
 
-@router.delete("/posts/{id}", status_code=204)
+@router.delete("/{id}", status_code=204)
 async def delete_post(id: int, db: Session = Depends(get_db)):
     post = db.get(Post, id)
 
