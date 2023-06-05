@@ -1,15 +1,12 @@
 from fastapi import FastAPI, status, HTTPException, Depends
-from pydantic import BaseModel
-from typing import Any, List, Optional
-from fastapi import Response
+from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import DateTime, select
-from datetime import datetime
+from sqlalchemy import select
 from copy import deepcopy
 
-from app.models import posts, metadata, Post
+from app.models import User, posts, metadata, Post
 from .database import get_db, engine
-from .schemas import PostResponse, PostCreate, PostUpdate
+from .schemas import PostResponse, PostCreate, PostUpdate, UserCreate, UserResponse
 
 
 metadata.create_all(bind=engine)
@@ -101,3 +98,14 @@ async def delete_post(id: int, db: Session = Depends(get_db)):
 
     db.commit()
     return
+
+
+@app.post("/users", status_code=201, response_model=UserResponse)
+async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+    new_user = User(**user.dict())
+
+    db.add(new_user)
+
+    db.commit()
+
+    return new_user
