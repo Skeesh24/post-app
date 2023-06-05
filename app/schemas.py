@@ -24,22 +24,19 @@ class PostResponse(PostValidationBase):
     created_at: datetime
 
 
-class UserValidationBase(BaseModel):
+class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+
+class UserUpdate(UserCreate):
+    pass
+
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    created_at: datetime
+
     class Config:
         orm_mode = True
-
-
-class UserCreate(UserValidationBase):
-    pass
-
-
-class UserUpdate(UserValidationBase):
-    pass
-
-
-class UserResponse(UserValidationBase):
-    id: int
-    created_at: datetime

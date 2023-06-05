@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from copy import deepcopy
 
-from app.models import User, posts, metadata, Post
+from app.models import User, posts, users, metadata, Post
 from .database import get_db, engine
 from .schemas import PostResponse, PostCreate, PostUpdate, UserCreate, UserResponse
 
@@ -109,3 +109,12 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
 
     return new_user
+
+
+@app.get("/users/{id}", response_model=UserResponse)
+async def get_user(id: int, db: Session = Depends(get_db)):
+    user = db.get(User, id)
+    if not user:
+        raise HTTPException(status.HTTP_404_NOT_FOUND,
+                            f"the {id}th user was not found")
+    return user
