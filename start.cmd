@@ -1,1 +1,1 @@
-py "C:\Users\Skeesh\Desktop\Vote-FastAPI app\app\main.py"
+uvicorn app.main:app --reload

@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from classes.database import get_db
-from classes.hashing import Hasher
-from classes.models import User
-from classes.schemas import UserCreate, UserResponse
-from classes.hashing import Hasher
 from sqlalchemy.orm import Session
 
+from ..classes.database import get_db
+from ..classes.hashing import Hasher
+from ..classes.models import User
+from ..classes.schemas import UserCreate, UserResponse
+from ..classes.hashing import Hasher
 
-router = APIRouter(prefix="/users")
+
+router = APIRouter(prefix="/users", tags=['Users'])
 
 
 @router.post("", status_code=201, response_model=UserResponse)

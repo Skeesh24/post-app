@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 
-from config import Config
+from ..config import Config
 
 
 engine = create_engine(url=Config.MYSQL_CONNECTION_STRING)

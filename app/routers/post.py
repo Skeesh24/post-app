@@ -1,17 +1,18 @@
 from copy import deepcopy
 from typing import List
 from sqlalchemy import select
-from classes.database import get_db
-from classes.models import Post, posts
-from classes.schemas import PostCreate, PostResponse, PostUpdate
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
 
+from ..classes.database import get_db
+from ..classes.models import Post, posts
+from ..classes.schemas import PostCreate, PostResponse, PostUpdate
 
-router = APIRouter(prefix="/posts")
+
+router = APIRouter(prefix="/posts", tags=['Posts'])
 
 
-@router.get("")
+@router.get("", response_model=List[PostResponse])
 async def get_posts(db: Session = Depends(get_db)):
     raw = db.execute(select(Post))
     len = db.execute(select(Post)).fetchall().__len__()
@@ -24,7 +25,7 @@ async def get_posts(db: Session = Depends(get_db)):
     return {"data": res}
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=List[PostResponse])
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
 async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = Post(**post.dict())
 
@@ -35,7 +36,7 @@ async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     return new_post
 
 
-@router.get("/latest")
+@router.get("/latest", response_model=PostResponse)
 async def get_latest_post(db: Session = Depends(get_db)):
     sel = select(Post)
     res = list(db.execute(sel.order_by(
@@ -46,8 +47,8 @@ async def get_latest_post(db: Session = Depends(get_db)):
     return {"detail": Post.dictFromRow(res)}
 
 
-@router.get("/{id}")
-async def get_post(id: int, db: Session = Depends(get_db), response_model=PostResponse):
+@router.get("/{id}", response_model=PostResponse)
+async def get_post(id: int, db: Session = Depends(get_db)):
     post = db.get(Post, id)
 
     if not post:
