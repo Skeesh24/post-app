@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from pydantic import BaseModel
-from typing import Any, Optional
+from typing import Any, List, Optional
 from fastapi import Response
 from sqlalchemy.orm import Session
 from sqlalchemy import DateTime, select
@@ -36,7 +36,7 @@ async def get_posts(db: Session = Depends(get_db)):
     return {"data": res}
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=List[PostResponse])
 async def create_post(post: PostCreate, db: Session = Depends(get_db)):
     new_post = Post(**post.dict())
 
