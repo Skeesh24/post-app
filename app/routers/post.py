@@ -8,7 +8,7 @@ from app.classes.oauth2 import get_current_user
 
 from ..classes.database import get_db
 from ..classes.models import Post, User, posts
-from ..classes.schemas import post_create, post_response, post_update
+from ..classes.schemas.posts import post_create, post_response, post_update
 
 
 router = APIRouter(prefix="/posts", tags=['Posts'])

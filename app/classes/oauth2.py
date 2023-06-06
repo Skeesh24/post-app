@@ -2,7 +2,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from app.classes.database import get_db
 from app.classes.models import User
-from app.classes.schemas import token_data
+from app.classes.schemas.tokens import token_data
 from app.config import Config
 from jose import JWTError
 from jose.jwt import encode, decode

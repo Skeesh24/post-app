@@ -6,7 +6,7 @@ from app.classes.database import get_db
 from app.classes.models import users
 from app.classes.hashing import Hasher
 from app.classes.oauth2 import create_access_token
-from app.classes.schemas import token
+from app.classes.schemas.tokens import token
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])

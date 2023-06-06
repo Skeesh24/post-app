@@ -1,6 +1,7 @@
 from .database import Base
 from sqlalchemy import DateTime, ForeignKey, func, text, Boolean, Column, Integer, Row, String, Table
 from .database import metadata
+from sqlalchemy.orm import relationship
 
 
 class Post(Base):
@@ -13,6 +14,7 @@ class Post(Base):
         "users.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=text("CURRENT_TIMESTAMP()"))
+    # creator = relationship("User", lazy=True)
 
     def __repr__(self) -> str:
         return f'Post №{self.id}, {self.title}, {self.content}, {self.published}'
@@ -32,7 +34,8 @@ posts = Table(
     Column("user_id", Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False),
     Column("created_at", DateTime(timezone=True),
-           nullable=False, server_default=func.now())
+           nullable=False, server_default=func.now()),
+    # Column('creator', table="users")
 )
 
 

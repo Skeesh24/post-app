@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from ..classes.database import get_db
 from ..classes.hashing import Hasher
 from ..classes.models import User
-from ..classes.schemas import user_create, user_response
+from ..classes.schemas.users import user_create, user_response
 from ..classes.hashing import Hasher
 
 
