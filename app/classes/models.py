@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy import DateTime, func, text, Boolean, Column, Integer, Row, String, Table
+from sqlalchemy import DateTime, ForeignKey, func, text, Boolean, Column, Integer, Row, String, Table
 from .database import metadata
 
 
@@ -9,6 +9,8 @@ class Post(Base):
     title = Column(String, nullable=False)
     content = Column(String, nullable=False)
     published = Column(Boolean, server_default="1")
+    user_id = Column(Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime(timezone=True),
                         nullable=False, server_default=text("CURRENT_TIMESTAMP()"))
 
@@ -27,6 +29,8 @@ posts = Table(
     Column("title", String(50), nullable=False),
     Column("content", String(50), nullable=False),
     Column("published", Boolean, server_default="1", nullable=False),
+    Column("user_id", Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), nullable=False),
     Column("created_at", DateTime(timezone=True),
            nullable=False, server_default=func.now())
 )
