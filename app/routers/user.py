@@ -16,8 +16,8 @@ async def create_user(user: user_create, db: Session = Depends(get_db)):
     new_user = User(**user.dict())
 
     # hashing the pass
-    hasher = Hasher(new_user.password)
-    new_user.password = hasher.get_hashed()
+    hasher = Hasher()
+    new_user.password = hasher.get_hashed(new_user.password)
 
     db.add(new_user)
 
