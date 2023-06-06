@@ -36,6 +36,7 @@ async def create_post(post: post_create, db: Session = Depends(get_db), user: Us
     db.add(new_post)
 
     db.commit()
+    db.refresh(new_post)
 
     return new_post
 
@@ -81,7 +82,7 @@ async def update_post(id: int, post: post_update, db: Session = Depends(get_db),
     db.delete(updated)
 
     db.add(new_post)
-
+    db.refresh(new_post)
     db.commit()
     return updated
 
