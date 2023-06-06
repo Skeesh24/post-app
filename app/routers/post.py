@@ -8,7 +8,7 @@ from app.classes.oauth2 import get_current_user
 
 from ..classes.database import get_db
 from ..classes.models import Post, posts
-from ..classes.schemas import PostCreate, PostResponse, PostUpdate
+from ..classes.schemas import post_create, post_response, post_update
 
 
 router = APIRouter(prefix="/posts", tags=['Posts'])
@@ -19,7 +19,7 @@ async def get_posts(db: Session = Depends(get_db)):
     raw = db.execute(select(Post))
     len = db.execute(select(Post)).fetchall().__len__()
 
-    res: List[PostResponse] = []
+    res: List[post_response] = []
 
     for i in range(len):
         res.append(Post.dictFromRow(raw.fetchone()))
@@ -27,8 +27,8 @@ async def get_posts(db: Session = Depends(get_db)):
     return {"data": res}  # TODO
 
 
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=PostResponse)
-async def create_post(post: PostCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=post_response)
+async def create_post(post: post_create, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     new_post = Post(**post.dict())
 
     db.add(new_post)
@@ -38,7 +38,7 @@ async def create_post(post: PostCreate, db: Session = Depends(get_db), user_id: 
     return new_post
 
 
-@router.get("/latest", response_model=PostResponse)
+@router.get("/latest", response_model=post_response)
 async def get_latest_post(db: Session = Depends(get_db)):
     sel = select(Post)
     res = list(db.execute(sel.order_by(
@@ -49,7 +49,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
     return {"detail": Post.dictFromRow(res)}  # TODO
 
 
-@router.get("/{id}", response_model=PostResponse)
+@router.get("/{id}", response_model=post_response)
 async def get_post(id: int, db: Session = Depends(get_db)):
     post = db.get(Post, id)
 
@@ -59,8 +59,8 @@ async def get_post(id: int, db: Session = Depends(get_db)):
     return {"data": post}  # TODO
 
 
-@router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=PostResponse)
-async def update_post(id: int, post: PostUpdate, db: Session = Depends(get_db)):
+@router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=post_response)
+async def update_post(id: int, post: post_update, db: Session = Depends(get_db)):
     updated = db.get(Post, id)
 
     if updated == None:

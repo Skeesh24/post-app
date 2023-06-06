@@ -2,10 +2,8 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
-# TODO refactoring
 
-
-class PostValidationBase(BaseModel):
+class post_validation_base(BaseModel):
     title: str
     content: str
     published: bool = True
@@ -14,29 +12,29 @@ class PostValidationBase(BaseModel):
         orm_mode = True
 
 
-class PostCreate(PostValidationBase):
+class post_create(post_validation_base):
     pass
 
 
-class PostUpdate(PostValidationBase):
+class post_update(post_validation_base):
     pass
 
 
-class PostResponse(PostValidationBase):
+class post_response(post_validation_base):
     id: int
     created_at: datetime
 
 
-class UserCreate(BaseModel):
+class user_create(BaseModel):
     email: EmailStr
     password: str
 
 
-class UserUpdate(UserCreate):
+class user_update(user_create):
     pass
 
 
-class UserResponse(BaseModel):
+class user_response(BaseModel):
     id: int
     email: EmailStr
     created_at: datetime
@@ -45,12 +43,12 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 
-class UserLogin(BaseModel):
+class user_login(BaseModel):
     email: EmailStr
     password: str
 
 
-class Token(BaseModel):
+class token(BaseModel):
     access_token: str
     token_type: str
 
@@ -58,6 +56,6 @@ class Token(BaseModel):
         orm_mode: True
 
 
-class Token_Data(BaseModel):
+class token_data(BaseModel):
     id: Optional[str] = None
     created_at: datetime

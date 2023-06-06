@@ -4,15 +4,15 @@ from sqlalchemy.orm import Session
 from ..classes.database import get_db
 from ..classes.hashing import Hasher
 from ..classes.models import User
-from ..classes.schemas import UserCreate, UserResponse
+from ..classes.schemas import user_create, user_response
 from ..classes.hashing import Hasher
 
 
 router = APIRouter(prefix="/users", tags=['Users'])
 
 
-@router.post("", status_code=201, response_model=UserResponse)
-async def create_user(user: UserCreate, db: Session = Depends(get_db)):
+@router.post("", status_code=201, response_model=user_response)
+async def create_user(user: user_create, db: Session = Depends(get_db)):
     new_user = User(**user.dict())
 
     # hashing the pass
@@ -26,7 +26,7 @@ async def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get("/{id}", response_model=UserResponse)
+@router.get("/{id}", response_model=user_response)
 async def get_user(id: int, db: Session = Depends(get_db)):
     user = db.get(User, id)
     if not user:

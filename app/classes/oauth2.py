@@ -1,5 +1,5 @@
 from typing import Optional
-from app.classes.schemas import Token_Data
+from app.classes.schemas import token_data
 from app.config import Config
 from jose import JWTError
 from jose.jwt import encode, decode
@@ -34,7 +34,7 @@ def verify_access_token(access_token: str, credentials_execption):
         if not id:
             raise credentials_execption
 
-        token_data = Token_Data(id=id)
+        token_data = token_data(id=id)
 
         return token_data
     except JWTError:
