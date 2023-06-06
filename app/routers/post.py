@@ -49,7 +49,6 @@ async def get_latest_post(db: Session = Depends(get_db), user: User = Depends(ge
                             "you don't already added any posts")
     # reverse and taking the one
     res = res[::-1][0]
-    print(user.email)
 
     return res
 
@@ -82,7 +81,6 @@ async def update_post(id: int, post: post_update, db: Session = Depends(get_db),
     db.delete(updated)
 
     db.add(new_post)
-    print(user.email)
 
     db.commit()
     return updated
@@ -98,7 +96,6 @@ async def delete_post(id: int, db: Session = Depends(get_db), user: User = Depen
                             f"{id}th post was not found")
 
     db.delete(post)
-    print(user.email)
 
     db.commit()
     return

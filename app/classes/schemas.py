@@ -6,6 +6,7 @@ from datetime import datetime
 class post_validation_base(BaseModel):
     title: str
     content: str
+    user_id: int
     published: bool = True
 
     class Config:
