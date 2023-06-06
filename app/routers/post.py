@@ -15,7 +15,7 @@ router = APIRouter(prefix="/posts", tags=['Posts'])
 
 
 @router.get("", response_model=List[post_response])
-async def get_posts(db: Session = Depends(get_db)):
+async def get_posts(db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     res: List[post_response] = db.execute(posts.select()).fetchall()
 
     return res
@@ -33,7 +33,7 @@ async def create_post(post: post_create, db: Session = Depends(get_db), user_id:
 
 
 @router.get("/latest", response_model=post_response)
-async def get_latest_post(db: Session = Depends(get_db)):
+async def get_latest_post(db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     res = db.execute(posts.select().order_by(posts.c["created_at"])).fetchall()
     # reverse and taking the one
     res = res[::-1][0]
@@ -42,7 +42,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
 
 
 @router.get("/{id}", response_model=post_response)
-async def get_post(id: int, db: Session = Depends(get_db)):
+async def get_post(id: int, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     post = db.get(Post, id)
 
     if not post:
@@ -52,7 +52,7 @@ async def get_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=post_response)
-async def update_post(id: int, post: post_update, db: Session = Depends(get_db)):
+async def update_post(id: int, post: post_update, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     updated = db.get(Post, id)
 
     if updated == None:

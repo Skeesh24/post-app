@@ -29,14 +29,14 @@ def verify_access_token(access_token: str, credentials_execption):
     try:
         payload = decode(access_token, SECRET_KEY, algorithms="HS256")
 
-        id: Optional[int] = payload.get('user_id')
+        id: Optional[str] = payload.get('user_id')
 
         if not id:
             raise credentials_execption
+        # TODO auto mapping is needed
+        data = token_data(id=id, created_at=datetime.now())
 
-        token_data = token_data(id=id)
-
-        return token_data
+        return data
     except JWTError:
         raise credentials_execption
 

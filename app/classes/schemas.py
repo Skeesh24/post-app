@@ -57,5 +57,5 @@ class token(BaseModel):
 
 
 class token_data(BaseModel):
-    id: Optional[str] = None
+    id: str
     created_at: datetime
