@@ -1,4 +1,6 @@
-# post-webapp
+# post-app
+
+this app are represents a backend of a small social net, gives u the ability to create entires, rate other people's entires and a little more features
 
 ## installation and deploy:
 
@@ -10,7 +12,7 @@
    - "./venv/Scripts/python.exe" -m pip install -U bcrypt
    - "./venv/Scripts/python.exe" -m pip install -U passlib
    - "./venv/Scripts/python.exe" -m pip install -U python-jose[cryptography]
-3. create the config.py in the root dir sets db constants, like host, port, user, pwd, db_name and driver
+3. create the config.py in the root dir sets db constants, like host, port, user, pwd, db_name, driver, and JWT secret key
 4. run the server by exec start.cmd
 
-== based on framework fastAPI ==
+**try it out:** _a link to the deployment_
