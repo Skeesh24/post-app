@@ -6,8 +6,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from ..config import Config
 
+MYSQL_CONNECTION_STRING = f"mysql+{Config.MYSQL_DRIVER}://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}:{Config.MYSQL_PORT}"
 
-engine = create_engine(url=Config.MYSQL_CONNECTION_STRING)
+engine = create_engine(url=MYSQL_CONNECTION_STRING)
 
 LocalSession = sessionmaker(bind=engine, autoflush=False)
 
@@ -16,7 +17,7 @@ LocalSession().execute(
 LocalSession().execute(text(f"USE {Config.MYSQL_DATABASE}"))
 
 engine = create_engine(
-    url=Config.MYSQL_CONNECTION_STRING+f"/{Config.MYSQL_DATABASE}")
+    url=MYSQL_CONNECTION_STRING+f"/{Config.MYSQL_DATABASE}")
 
 LocalSession = sessionmaker(bind=engine, autoflush=False)
 

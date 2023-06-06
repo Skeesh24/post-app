@@ -12,7 +12,7 @@ this app are represents a backend of a small social net, gives u the ability to 
    - "./venv/Scripts/python.exe" -m pip install -U bcrypt
    - "./venv/Scripts/python.exe" -m pip install -U passlib
    - "./venv/Scripts/python.exe" -m pip install -U python-jose[cryptography]
-3. create the config.py in the root dir sets db constants, like host, port, user, pwd, db_name, driver, and JWT secret key
+3. create the .env in the root dir sets constants: host, port, user, pwd, db_name, driver for database and JWT secret key for authentication
 4. run the server by exec start.cmd
 
 **try it out:** _a link to the deployment_
