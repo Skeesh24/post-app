@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     MYSQL_PASSWORD: str
     MYSQL_DATABASE: str
     MYSQL_DRIVER: str
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    ALGORYTHM: str
     JWT_SECRET_KEY: str
 
     class Config:

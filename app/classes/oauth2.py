@@ -14,23 +14,19 @@ from fastapi.security import OAuth2PasswordBearer
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 
-SECRET_KEY = Config.JWT_SECRET_KEY
-ALGORYTHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 10
-
-
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now() + timedelta(minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-    jwt = encode(to_encode, SECRET_KEY, algorithm=ALGORYTHM)
+    jwt = encode(to_encode, Config.JWT_SECRET_KEY, algorithm=Config.ALGORYTHM)
 
     return jwt
 
 
 def verify_access_token(access_token: str, credentials_execption):
     try:
-        payload = decode(access_token, SECRET_KEY, algorithms="HS256")
+        payload = decode(access_token, Config.JWT_SECRET_KEY,
+                         algorithms=Config.ALGORYTHM)
 
         id: Optional[str] = payload.get('user_id')
 
