@@ -6,12 +6,13 @@ from app.classes.database import get_db
 from app.classes.models import users
 from app.classes.hashing import Hasher
 from app.classes.oauth2 import create_access_token
+from app.classes.schemas import token
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/login")
+@router.post("/login", response_model=token)
 async def login(credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.execute(users.select().where(
         users.c["email"] == credentials.username)).fetchone()
@@ -28,4 +29,4 @@ async def login(credentials: OAuth2PasswordRequestForm = Depends(), db: Session 
 
     access_token = create_access_token({"user_id": user.id})
 
-    return {"token": access_token, "token_type": "bearer"}
+    return token(access_token=access_token, token_type="Bearer")

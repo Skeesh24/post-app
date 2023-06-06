@@ -14,7 +14,7 @@ from ..classes.schemas import post_create, post_response, post_update
 router = APIRouter(prefix="/posts", tags=['Posts'])
 
 
-@router.get("")
+@router.get("", response_model=List[post_response])
 async def get_posts(db: Session = Depends(get_db)):
     raw = db.execute(select(Post))
     len = db.execute(select(Post)).fetchall().__len__()
@@ -24,7 +24,7 @@ async def get_posts(db: Session = Depends(get_db)):
     for i in range(len):
         res.append(Post.dictFromRow(raw.fetchone()))
 
-    return {"data": res}  # TODO
+    return res
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=post_response)
@@ -46,7 +46,7 @@ async def get_latest_post(db: Session = Depends(get_db)):
     # reverse and taking the one
     res = res[::-1][0]
 
-    return {"detail": Post.dictFromRow(res)}  # TODO
+    return res
 
 
 @router.get("/{id}", response_model=post_response)
@@ -56,7 +56,7 @@ async def get_post(id: int, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"the {id}th post was not found")
-    return {"data": post}  # TODO
+    return post
 
 
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=post_response)
@@ -69,15 +69,15 @@ async def update_post(id: int, post: post_update, db: Session = Depends(get_db))
 
     new_post = deepcopy(updated)
     new_post.created_at = None
-    new_post.title = updated.title  # TODO
-    new_post.content = updated.content  # TODO
+    new_post.title = post.title  # TODO auto mapping
+    new_post.content = post.content
 
     db.delete(updated)
 
     db.add(new_post)
 
     db.commit()
-    return {"data": updated}
+    return updated
 
 
 @router.delete("/{id}", status_code=204)
