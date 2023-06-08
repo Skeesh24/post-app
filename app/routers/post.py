@@ -21,7 +21,7 @@ async def get_posts(db: Session = Depends(get_db), user: User = Depends(get_curr
 
     if not res or len(res) == 0:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            "you don't already added any posts")
+                            "you don't added any posts yet")
 
     return res
 
@@ -47,7 +47,7 @@ async def get_latest_post(db: Session = Depends(get_db), user: User = Depends(ge
         posts.c["user_id"] == user.id)).fetchall()
     if res is None or len(res) == 0:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
-                            "you don't already added any posts")
+                            "you don't added any posts yet")
     # reverse and taking the one
     res = res[::-1][0]
 

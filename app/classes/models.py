@@ -57,3 +57,21 @@ users = Table(
     Column("created_at", DateTime(timezone=True),
            nullable=False, server_default=func.now())
 )
+
+
+class Vote(Base):
+    __tablename__ = "votes"
+    post_id = Column(Integer, ForeignKey(
+        "posts.id", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), primary_key=True)
+
+
+votes = Table(
+    "votes",
+    metadata,
+    Column("post_id", Integer, ForeignKey(
+        "posts.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), primary_key=True),
+)
