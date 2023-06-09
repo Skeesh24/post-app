@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -26,6 +27,7 @@ class post_response(post_validation_base):
     user_id: int
     # creator: user_response = None
     created_at: datetime
+    upvotes_count: Optional[int]
 
     class Config:
         orm_mode = True

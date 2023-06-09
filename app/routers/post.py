@@ -1,20 +1,20 @@
 from copy import deepcopy
 from typing import List
-from sqlalchemy import select
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
 
 from app.classes.oauth2 import get_current_user
 
 from ..classes.database import get_db
-from ..classes.models import Post, User, posts
+from ..classes.models import Post, User, posts, votes, users
 from ..classes.schemas.posts import post_create, post_response, post_update
 
 
 router = APIRouter(prefix="/posts", tags=['Posts'])
 
 
-@router.get("", response_model=List[post_response])
+@router.get("", response_model=List[dict])
 async def get_posts(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     res: List[post_response] = db.execute(
         posts.select().where(posts.c["user_id"] == user.id)).fetchall()
@@ -23,7 +23,18 @@ async def get_posts(db: Session = Depends(get_db), user: User = Depends(get_curr
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             "you don't added any posts yet")
 
-    return res
+    # исправить баг с голосованием от лица другого пользователя в vote router'e
+
+    dict_res = []
+
+    for i in res:
+        count = db.query(func.count(votes.c.user_id)).where(
+            votes.c.post_id == i.id).scalar()
+        new_dict = dict(zip(i._fields, i.tuple()))
+        new_dict["upvotes_count"] = count
+        dict_res.append(new_dict)
+
+    return dict_res
 
 
 @router.post("", status_code=status.HTTP_201_CREATED, response_model=post_response)
