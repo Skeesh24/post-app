@@ -12,13 +12,14 @@ router = APIRouter(prefix="/votes", tags=["Votes"])
 
 @router.post("", response_model=str, status_code=status.HTTP_201_CREATED)
 async def set_vote(vote: vote_create, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+
     newvote_dict = vote.dict()
     newvote_dict.update({"user_id": user.id})
     dir = newvote_dict.pop("vote_direction")
     message = ""
 
     post = db.execute(posts.select().where(
-        posts.c["user_id"] == user.id and posts.c["id"] == vote.post_id)).fetchone()
+        posts.c["id"] == vote.post_id)).fetchone()
     if post is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"the post with id={vote.post_id} was not found")

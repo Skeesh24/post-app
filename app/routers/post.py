@@ -23,8 +23,6 @@ async def get_posts(db: Session = Depends(get_db), user: User = Depends(get_curr
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             "you don't added any posts yet")
 
-    # исправить баг с голосованием от лица другого пользователя в vote router'e
-
     dict_res = []
 
     for i in res:
