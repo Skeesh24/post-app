@@ -12,6 +12,7 @@ this app are represents a backend of a small social net, gives u the ability to 
    - "./venv/Scripts/python.exe" -m pip install -U bcrypt
    - "./venv/Scripts/python.exe" -m pip install -U passlib
    - "./venv/Scripts/python.exe" -m pip install -U python-jose[cryptography]
+   - "./venv/Scripts/python.exe" -m pip install -U alembic
 3. create the .env in the root dir sets constants: host, port, user, pwd, db_name, driver for database and JWT secret key for authentication
 4. run the server by exec start.cmd
 
