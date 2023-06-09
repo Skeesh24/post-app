@@ -17,8 +17,16 @@ depends_on = None
 
 
 def upgrade() -> None:
-    pass
+    op.create_table("posts",
+                    op.Column("id", sa.Integer, primary_key=True,
+                              autoincrement=True),
+                    op.Column("title", sa.String(50), nullable=False),
+                    op.Column("content", sa.String(200), nullable=False),
+                    op.Column("published", sa.Boolean,
+                              server_default="1", nullable=False),
+                    op.Column("created_at", sa.DateTime(timezone=True),
+                              nullable=False, server_default=sa.func.now()),)
 
 
 def downgrade() -> None:
-    pass
+    op.drop_table("posts")

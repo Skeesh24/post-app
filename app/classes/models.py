@@ -7,8 +7,8 @@ from sqlalchemy.orm import relationship
 class Post(Base):
     __tablename__ = "posts"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    title = Column(String, nullable=False)
-    content = Column(String, nullable=False)
+    title = Column(String(50), nullable=False)
+    content = Column(String(200), nullable=False)
     published = Column(Boolean, server_default="1")
     user_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)
@@ -29,7 +29,7 @@ posts = Table(
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("title", String(50), nullable=False),
-    Column("content", String(50), nullable=False),
+    Column("content", String(200), nullable=False),
     Column("published", Boolean, server_default="1", nullable=False),
     Column("user_id", Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False),
