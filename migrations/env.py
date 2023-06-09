@@ -12,7 +12,7 @@ from app.config import Config
 # access to the values within the .ini file in use.
 config = context.config
 config.set_main_option(
-    "sqlalchemy.url", f"mysql+{Config.MYSQL_DRIVER}://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}:{Config.PORT}/{Config.MYSQL_DATABASE}")
+    "sqlalchemy.url", f"mysql+{Config.MYSQL_DRIVER}://{Config.MYSQL_USER}:{Config.MYSQL_PASSWORD}@{Config.MYSQL_HOST}:{Config.MYSQL_PORT}/{Config.MYSQL_DATABASE}")
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
