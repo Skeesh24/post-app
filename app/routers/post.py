@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, status, HTTPException, APIRouter
 
 from app.classes.oauth2 import get_current_user
+from app.classes.schemas.users import user_response
 
 from ..classes.database import get_db
 from ..classes.models import Post, User, posts, votes, users
@@ -71,7 +72,11 @@ async def get_post(id: int, db: Session = Depends(get_db), user: User = Depends(
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"the {id}th post was not found")
-    return post
+
+    post_dict = dict(zip(post._fields, post.tuple()))
+    post_dict.update({"creator": user_response(**user.__dict__)})
+
+    return post_dict
 
 
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=post_response)
