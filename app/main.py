@@ -8,9 +8,6 @@ from .routers.auth import router as auth_router
 from .routers.vote import router as vote_router
 
 
-metadata.create_all(bind=engine)
-
-
 app = FastAPI()
 app.include_router(post_router)
 app.include_router(user_router)
@@ -20,8 +17,4 @@ app.include_router(vote_router)
 
 @app.get("/")
 async def root():
-    return {"message ": "welcome to my api"}
-
-
-# if __name__ == "__main__":
-    # run(app=app, host=Config.SERVER_HOST, port=Config.SERVER_PORT)
+    return {"message ": "welcome post-app"}
