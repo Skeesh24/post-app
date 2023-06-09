@@ -25,8 +25,8 @@ class post_update(post_validation_base):
 class post_response(post_validation_base):
     id: int
     user_id: int
-    created_at: datetime
     creator: user_response
+    created_at: datetime
     upvotes_count: Optional[int]
 
     class Config:

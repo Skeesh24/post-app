@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime
 from typing import List
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -40,13 +41,19 @@ async def get_posts(db: Session = Depends(get_db), user: User = Depends(get_curr
 async def create_post(post: post_create, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     # TODO auto mapping
     temp_dict = post.dict()
+    temp_dict.update({"created_at": datetime.now()})
     temp_dict.update({"user_id": user.id})
     new_post = Post(**temp_dict)
+    temp_dict.update({"creator": user})
+    temp_dict.update({"upvotes_count": 0})
+    temp_dict.update({"id": new_post.id})
+    resp = post_response(**temp_dict)
 
-    db.add(new_post)
+    # db.add(Post(**new_post.dict()))
+    posts.insert().values(**temp_dict)
 
     db.commit()
-    db.refresh(new_post)
+    # db.refresh(new_post)
 
     return new_post
 
@@ -88,29 +95,33 @@ async def update_post(id: int, post: post_update, db: Session = Depends(get_db),
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
 
-    new_post = deepcopy(updated)
-    new_post.created_at = None
-    new_post.title = post.title  # TODO auto mapping
-    new_post.content = post.content
+    new_dict = dict(zip(updated._fields, updated.tuple()))
+    new_dict["created_at"] = None
+    new_dict["title"] = post.title  # TODO auto mapping
+    new_dict["content"] = post.content
+
+    new_post = Post(**new_dict)
 
     db.delete(updated)
 
     db.add(new_post)
     db.refresh(new_post)
     db.commit()
-    return updated
+
+    new_dict["creator"] = user_response(**user.__dict__)
+
+    return new_dict
 
 
 @router.delete("/{id}", status_code=204)
 async def delete_post(id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     post = db.execute(posts.select().where(
         posts.c["user_id"] == user.id and posts.c["id"] == id)).fetchone()
-
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
 
-    db.delete(post)
+    posts.delete().where(posts.c.id == id)
 
     db.commit()
     return
