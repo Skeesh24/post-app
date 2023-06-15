@@ -73,8 +73,9 @@ async def get_latest_post(db: Session = Depends(get_db), user: User = Depends(ge
 
 @router.get("/{id}", response_model=post_response)
 async def get_post(id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+
     post = db.execute(posts.select().where(
-        posts.c["user_id"] == user.id and posts.c["id"] == id)).fetchone()
+        posts.c.user_id == user.id).where(posts.c.id == id)).fetchone()
 
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
@@ -89,7 +90,7 @@ async def get_post(id: int, db: Session = Depends(get_db), user: User = Depends(
 @router.put("/{id}", status_code=status.HTTP_202_ACCEPTED, response_model=post_response)
 async def update_post(id: int, post: post_update, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     updated = db.execute(posts.select().where(
-        posts.c["user_id"] == user.id and posts.c["id"] == id)).fetchone()
+        posts.c["user_id"] == user.id).where(posts.c["id"] == id)).fetchone()
 
     if updated == None:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
@@ -116,7 +117,8 @@ async def update_post(id: int, post: post_update, db: Session = Depends(get_db),
 @router.delete("/{id}", status_code=204)
 async def delete_post(id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     post = db.execute(posts.select().where(
-        posts.c["user_id"] == user.id and posts.c["id"] == id)).fetchone()
+        posts.c["user_id"] == user.id).where(posts.c["id"] == id)).fetchone()
+
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND,
                             f"{id}th post was not found")
