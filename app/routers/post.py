@@ -68,7 +68,15 @@ async def get_latest_post(db: Session = Depends(get_db), user: User = Depends(ge
     # reverse and taking the one
     res = res[::-1][0]
 
-    return res
+    post_dict = dict(zip(res._fields, res.tuple()))
+
+    upvotes = db.execute(votes.select().where(
+        votes.c.user_id == user.id).where(votes.c.post_id == res.id)).fetchall()
+
+    post_dict.update({"creator": user_response(**user.__dict__)})
+    post_dict.update({"upvotes_count": len(upvotes)})
+
+    return post_dict
 
 
 @router.get("/{id}", response_model=post_response)
@@ -82,7 +90,12 @@ async def get_post(id: int, db: Session = Depends(get_db), user: User = Depends(
                             f"the {id}th post was not found")
 
     post_dict = dict(zip(post._fields, post.tuple()))
+
+    upvotes_count = len(db.execute(votes.select().where(
+        votes.c.user_id == user.id).where(votes.c.post_id == id)).fetchall())
+
     post_dict.update({"creator": user_response(**user.__dict__)})
+    post_dict.update({"upvotes_count": upvotes_count})
 
     return post_dict
 

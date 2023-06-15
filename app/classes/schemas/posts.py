@@ -27,7 +27,7 @@ class post_response(post_validation_base):
     user_id: int
     creator: user_response
     created_at: datetime
-    upvotes_count: Optional[int]
+    upvotes_count: int
 
     class Config:
         orm_mode = True
