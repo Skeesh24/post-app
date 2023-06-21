@@ -1,1 +1,1 @@
-uvicorn app.main:app 
+python3 -m uvicorn app.main:app 
