@@ -1,10 +1,12 @@
-python3 -3 -m venv &&
-"./venv/Scripts/python.exe" -m pip install -U fastapi[all] &&
-"./venv/Scripts/python.exe" -m pip install -U psycopg2 &&
-"./venv/Scripts/python.exe" -m pip install -U sqlalchemy &&
-"./venv/Scripts/python.exe" -m pip install -U bcrypt &&
-"./venv/Scripts/python.exe" -m pip install -U passlib &&
-"./venv/Scripts/python.exe" -m pip install -U python-jose[cryptography] &&
-"./venv/Scripts/python.exe" -m pip install -U alembic &&
-alembic init && 
-alembic upgdare 9714d366efca
+apt install python3-venv &&
+apt install python3-pip
+"/bin/python3" -m pip install -U fastapi[all] &&
+"/bin/python3" -m pip install -U mysql &&
+"/bin/python3" -m pip install -U mysql-connector-python &&
+"/bin/python3" -m pip install -U sqlalchemy &&
+"/bin/python3" -m pip install -U bcrypt &&
+"/bin/python3" -m pip install -U passlib &&
+"/bin/python3" -m pip install -U python-jose[cryptography] &&
+"/bin/python3" -m pip install -U alembic &&
+"/bin/alembic" init && 
+"/bin/alembic" upgdare 9714d366efca
