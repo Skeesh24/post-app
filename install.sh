@@ -1,7 +1,6 @@
-apt install python3-venv &&
-apt install python3-pip
-apt install mysql-server
-apt install libmysqlclient-dev
+apt install python3-pip &&
+apt install mysql-server &&
+apt install libmysqlclient-dev &&
 python3 -m pip install -U fastapi[all] &&
 python3 -m pip install -U sqlalchemy &&
 python3 -m pip install -U bcrypt &&
