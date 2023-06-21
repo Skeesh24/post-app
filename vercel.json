@@ -2,7 +2,7 @@
   "name": "post-app by Skeesh",
   "builds": [
     {
-      "src": "app/main.py",
+      "src": "entrypoint.py",
       "use": "@vercel/python"
     }
   ],
