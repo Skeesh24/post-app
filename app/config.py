@@ -2,6 +2,8 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    SERVER_HOST: str
+    SERVER_PORT: int
     MYSQL_HOST: str
     MYSQL_PORT: str
     MYSQL_USER: str
