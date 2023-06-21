@@ -1,0 +1,16 @@
+{
+  "name": "post-app by Skeesh",
+  "version": 1.24,
+  "builds": [
+    {
+      "src": "app/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "app/main.py"
+    }
+  ]
+}
