@@ -1,6 +1,5 @@
 {
   "name": "post-app by Skeesh",
-  "version": 1,
   "builds": [
     {
       "src": "app/main.py",
