@@ -4,4 +4,4 @@ from subprocess import call
 call(['sh', './install.sh'])
 
 # starting server
-call(["sh", "./app/main.py"])
+call(["sh", "./start.sh"])
