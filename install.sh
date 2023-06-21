@@ -1,3 +1,5 @@
+
+
 py -3 -m venv &&
 "./venv/Scripts/python.exe" -m pip install -U fastapi[all] &&
 "./venv/Scripts/python.exe" -m pip install -U psycopg2 &&
