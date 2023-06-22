@@ -26,17 +26,16 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+async def root():
+    return {"message ": "welcome post-app"}
+
 app.include_router(post_router)
 app.include_router(user_router)
 app.include_router(auth_router)
 app.include_router(vote_router)
 
 
-@app.get("/")
-async def root():
-    return {"message ": "welcome post-app"}
-
-
-if __name__ == "__main__":
-    run("app.main:app", host=Config.SERVER_HOST,
-        port=Config.SERVER_PORT, log_level="info")
+# if __name__ == "__main__":
+#     run("app.main:app", host=Config.SERVER_HOST,
+#         port=Config.SERVER_PORT, log_level="info")
