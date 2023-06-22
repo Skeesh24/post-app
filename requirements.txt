@@ -1,4 +1,4 @@
-mysql-server3.10
+
 libmysqlclient-dev
 fastapi[all]
 sqlalchemy
