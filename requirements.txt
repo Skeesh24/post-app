@@ -1,0 +1,11 @@
+mysql-server 
+libmysqlclient-dev
+fastapi[all]
+sqlalchemy
+bcrypt
+passlib
+python-jose[cryptography]
+alembic
+mysql-connector-python
+mysql
+uvicorn
