@@ -2,11 +2,11 @@ from fastapi import FastAPI
 from uvicorn import run
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers.post import router as post_router
-from .routers.user import router as user_router
-from .routers.auth import router as auth_router
-from .routers.vote import router as vote_router
-from .config import Config
+from app.routers.post import router as post_router
+from app.routers.user import router as user_router
+from app.routers.auth import router as auth_router
+from app.routers.vote import router as vote_router
+from app.config import Config
 
 
 app = FastAPI()
