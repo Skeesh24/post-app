@@ -1,6 +1,7 @@
-apt install python3-pip &&
-apt install mysql-server &&
-apt install libmysqlclient-dev &&
+sudo apt install python3 &&
+sudo apt install python3-pip &&
+sudo apt install mysql-server &&
+sudo apt install libmysqlclient-dev &&
 python3 -m pip install -U fastapi[all] &&
 python3 -m pip install -U sqlalchemy &&
 python3 -m pip install -U bcrypt &&
